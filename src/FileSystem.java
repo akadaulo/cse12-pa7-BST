@@ -71,15 +71,26 @@ public class FileSystem {
     // TODO
     public FileSystem filter(String startDate, String endDate) {
         FileSystem filteredFileSystem = new FileSystem();
-        for (String date = startDate; !date.equals(endDate); date = getNextDate(date)) {
-            ArrayList<FileData> filesByDate = dateTree.get(date);
-            if (filesByDate != null) {
-                for (FileData fileData : filesByDate) {
-                    filteredFileSystem.add(fileData.getName(), fileData.getDirectory(), fileData.getModifiedDate());
+        ArrayList<String> dateKeys = new ArrayList<>(dateTree.keys());
+        
+        // Iterate through date keys
+        for (String date : dateKeys) {
+            // Check if the current date is within the range
+            if (isDateInRange(date, startDate, endDate)) {
+                ArrayList<FileData> filesByDate = dateTree.get(date);
+                if (filesByDate != null) {
+                    // Add files to the filtered file system
+                    for (FileData fileData : filesByDate) {
+                        filteredFileSystem.add(fileData.getName(), fileData.getDirectory(), fileData.getModifiedDate());
+                    }
                 }
             }
         }
         return filteredFileSystem;
+    }
+
+    private boolean isDateInRange(String date, String startDate, String endDate) {
+        return date.compareTo(startDate) >= 0 && date.compareTo(endDate) < 0;
     }
     
     
